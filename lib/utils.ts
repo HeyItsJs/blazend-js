@@ -1,4 +1,6 @@
-import fetch from "node-fetch";
+import nodeFetch from "node-fetch";
+
+const fetch = nodeFetch;
 
 export interface FetchJSONResponse<T> {
   status: number;
