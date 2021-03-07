@@ -7,19 +7,8 @@ export interface FetchJSONResponse<T> {
   data: T;
 }
 
-export function fetchJSON<T>(url: string, method: string, body?: any): Promise<FetchJSONResponse<T>> {
+export function fetchJSON<T>(url: string, options: any): Promise<FetchJSONResponse<T>> {
   return new Promise((resolve, reject) => {
-    const options: any = {
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method,
-    };
-    if (body) {
-      options.body = JSON.stringify(body);
-    }
-
     fetch(url, options)
       .then((response) => {
         const status = response.status;
@@ -38,6 +27,6 @@ export function fetchJSON<T>(url: string, method: string, body?: any): Promise<F
   });
 }
 
-export function postJSON<T>(url: string, body: any): Promise<FetchJSONResponse<T>> {
-  return fetchJSON(url, "POST", body);
+export function postJSON<T>(url: string, options: any): Promise<FetchJSONResponse<T>> {
+  return fetchJSON(url, options);
 }
