@@ -15,24 +15,23 @@ export function fetchJSON<T>(url: string, options: any, logPerformanceMetrics: b
         const status = response.status;
         response
           .json()
-          .then((data) => {
+          .then(({ result, execTime }) => {
             if (logPerformanceMetrics) {
               const responseTime = new Date().getTime();
               const totalTime = responseTime - requestTime;
-              const backendExecutionTime = Number(response.headers.get("EXEC_TIME"));
-              const networkLatency = totalTime - backendExecutionTime;
+              const networkLatency = totalTime - execTime;
               console.log(
                 "Request",
                 url,
                 "Total Time",
                 totalTime,
                 "Backend Execution Time",
-                backendExecutionTime,
+                execTime,
                 "Network Latency",
                 networkLatency,
               );
             }
-            resolve({ status: status, data: data });
+            resolve({ status: status, data: result });
           })
           .catch((error) => {
             reject(error);
