@@ -1,4 +1,5 @@
 import nodeFetch from "node-fetch";
+import qs from "qs";
 
 const fetch = nodeFetch;
 
@@ -7,7 +8,11 @@ export interface FetchJSONResponse<T> {
   data: T;
 }
 
-export function fetchJSON<T>(url: string, options: any, logPerformanceMetrics: boolean): Promise<FetchJSONResponse<T>> {
+export function fetchJSON<T>(
+  url: string,
+  options: any,
+  logPerformanceMetrics?: boolean,
+): Promise<FetchJSONResponse<T>> {
   const requestTime = logPerformanceMetrics ? new Date().getTime() : 0;
   return new Promise((resolve, reject) => {
     fetch(url, options)
@@ -43,6 +48,24 @@ export function fetchJSON<T>(url: string, options: any, logPerformanceMetrics: b
   });
 }
 
-export function postJSON<T>(url: string, options: any, logPerformanceMetrics: boolean): Promise<FetchJSONResponse<T>> {
-  return fetchJSON(url, options, logPerformanceMetrics);
+export function postJSON<T>(
+  url: string,
+  options: any,
+  params: any,
+  logPerformanceMetrics: boolean,
+): Promise<FetchJSONResponse<T>> {
+  const finalOptions = Object.assign({}, options, { method: "POST", body: JSON.stringify(params) });
+  return fetchJSON(url, finalOptions, logPerformanceMetrics);
+}
+
+export function getJSON<T>(
+  url: string,
+  options: any,
+  params: any,
+  logPerformanceMetrics: boolean,
+): Promise<FetchJSONResponse<T>> {
+  const queryString = qs.stringify(params);
+  const finalUrl = `${url}?${queryString}`;
+  const finalOptions = Object.assign({}, options, { method: "GET" });
+  return fetchJSON(finalUrl, finalOptions, logPerformanceMetrics);
 }

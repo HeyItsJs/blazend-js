@@ -1,4 +1,9 @@
-import { FetchJSONResponse, postJSON } from "./utils";
+import { FetchJSONResponse, getJSON, postJSON } from "./utils";
+
+export enum FuncType {
+  Post = "POST",
+  Get = "GET",
+}
 
 export class API {
   private url: string = "/";
@@ -21,9 +26,11 @@ export class API {
     this.options.headers.Authorization = `Bearer ${token}`;
   }
 
-  call<T>(serviceName: string, funcName: string, params: any = {}): Promise<FetchJSONResponse<T>> {
+  call<T>(serviceName: string, funcName: string, funcType: FuncType, params: any = {}): Promise<FetchJSONResponse<T>> {
     const url = `${this.url}v1/api/services/${serviceName}/${funcName}`;
-    const options = Object.assign({}, this.options, { method: "POST", body: JSON.stringify(params) });
-    return postJSON(url, options, this.logPerformanceMetrics);
+    if (funcType === FuncType.Get) {
+      return getJSON(url, this.options, params, this.logPerformanceMetrics);
+    }
+    return postJSON(url, this.options, params, this.logPerformanceMetrics);
   }
 }
